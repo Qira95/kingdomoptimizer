@@ -1,0 +1,47 @@
+<template>
+  <div class="buildings">
+    <h2 class="clickable" @click="villages.sortBuildings()">Buildings</h2>
+    <div v-for="(building, i) in village.buildings" :key="building.id">
+      <span>{{ i + 1 }}. &nbsp;</span>
+      <select
+        :value="building.gid"
+        @change="villages.setBuilding(building.id, Number($event.target.value), building.level)">
+        <option v-for="ab in availableBuildings" :value="ab.gid" :key="ab.gid">{{ ab.name }}</option>
+      </select>
+      <select
+        :value="building.level"
+        @change="villages.setBuilding(building.id, building.gid, Number($event.target.value))">
+        <option v-for="n in maxLevel(building.gid)" :value="n" :key="n">{{ n }}</option>
+      </select>
+      <span class="clickable" @click="villages.deleteBuilding(building.id)">delete</span>
+    </div>
+    <button @click="villages.addBuilding()">Add new building</button>
+  </div>
+</template>
+
+<script setup>
+import { computed } from 'vue';
+import { useVillagesStore } from '../../stores/villages';
+import { useSettingsStore } from '../../stores/settings';
+import { villageBuildings, byGid, isBuildingAllowed } from '../../services/gameData';
+
+const villages = useVillagesStore();
+const settings = useSettingsStore();
+const village = computed(() => villages.activeVillage);
+
+const availableBuildings = computed(() => {
+  const builtGids = new Set(village.value.buildings.map((b) => b.gid));
+  const context = {
+    tribe: settings.tribe,
+    isCapital: village.value.isCapital,
+    isCity: village.value.isCity,
+    builtGids,
+  };
+  // keep already-selected buildings in the list so existing rows stay valid
+  return villageBuildings.filter((b) => builtGids.has(b.gid) || isBuildingAllowed(b.gid, context));
+});
+
+function maxLevel(gid) {
+  return byGid.get(gid).maxLevel;
+}
+</script>

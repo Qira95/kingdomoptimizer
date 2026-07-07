@@ -1,15 +1,19 @@
-import buildOrder from '../../buildOrder';
-import {
-  filterBuildings,
-} from '../consts/limitations';
+import buildOrder from '../../data/buildOrder.json';
+import { isBuildingAllowed } from './gameData';
 
-export default function getRecommendations(doneBuildings, isCapital, tribe) {
-  const buildOrderForVillage = filterBuildings(buildOrder, isCapital, tribe);
-  return buildOrderForVillage.filter((nextBuilding) => {
-    const buildingAlreadyBuilt = doneBuildings.find(done => {
-      return nextBuilding.name === done.name && nextBuilding.level <= done.level;
-    });
-
-    return !buildingAlreadyBuilt;
+export function getRecommendations(village, tribe) {
+  const builtGids = new Set(village.buildings.map((b) => b.gid));
+  const context = {
+    tribe,
+    isCapital: village.isCapital,
+    isCity: village.isCity,
+    builtGids,
+  };
+  return buildOrder.filter((step) => {
+    if (!isBuildingAllowed(step.gid, context)) return false;
+    const alreadyBuilt = village.buildings.some(
+      (done) => done.gid === step.gid && step.level <= done.level
+    );
+    return !alreadyBuilt;
   });
 }

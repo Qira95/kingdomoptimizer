@@ -1,62 +1,24 @@
 {
-  "name": "kingdoptimizer",
-  "version": "0.1.0",
-  "private": false,
-  "description": "Scripts to get the optimal travian kingdom build orders",
+  "name": "kingdomoptimizer",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "dev": "vite",
+    "start": "vite --open",
+    "build": "vite build",
+    "preview": "vite preview",
+    "data:extract": "node scripts/extractGameData.mjs",
+    "data:order": "node scripts/computeBuildOrder.mjs",
+    "data": "npm run data:extract && npm run data:order"
   },
   "dependencies": {
-    "core-js": "^3.3.2",
-    "vue": "^2.6.10",
-    "vuex": "^3.1.2",
-    "vuex-persist": "^2.1.1"
+    "pinia": "3.0.4",
+    "vue": "3.5.39"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.0.0",
-    "@vue/cli-plugin-eslint": "^4.0.0",
-    "@vue/cli-service": "^4.0.0",
-    "babel-eslint": "^10.0.3",
-    "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.0.0",
-    "node-sass": "^4.13.0",
-    "sass-loader": "^8.0.0",
-    "vue-template-compiler": "^2.6.10"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "rules": {},
-    "parserOptions": {
-      "parser": "babel-eslint"
-    }
-  },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
-    }
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vinczedani/kingdoptimizer.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/vinczedani/kingdoptimizer/issues"
-  },
-  "homepage": "https://github.com/vinczedani/kingdoptimizer#readme"
+    "@vitejs/plugin-vue": "6.0.7",
+    "vite": "7.3.6"
+  }
 }

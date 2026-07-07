@@ -1,10 +1,13 @@
-import Vue from 'vue'
-import store from './store';
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import App from './App.vue';
+import { persistPlugin } from './stores/persist';
+import { migrateLegacyState } from './stores/migrate';
+import './style.css';
 
-import App from './App.vue'
-Vue.config.productionTip = false
+migrateLegacyState();
 
-new Vue({
-  render: h => h(App),
-  store,
-}).$mount('#app')
+const pinia = createPinia();
+pinia.use(persistPlugin);
+
+createApp(App).use(pinia).mount('#app');
