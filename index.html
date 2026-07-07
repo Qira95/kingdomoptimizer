@@ -4,7 +4,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-    <title>Kingdomoptimizer</title>
+    <title>KingdomOptimizer</title>
+    <script>
+      // Apply saved theme before paint to avoid a flash of the wrong palette.
+      (function () {
+        try {
+          var t = localStorage.getItem('kingdomoptimizer:theme');
+          if (t === 'light' || t === 'dark') {
+            document.documentElement.setAttribute('data-theme', t);
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>

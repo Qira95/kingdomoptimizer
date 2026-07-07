@@ -47,11 +47,18 @@ export const useVillagesStore = defineStore('villages', {
     sortVillages() {
       this.villages.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1));
     },
-    markVillageAsCapital(villageId) {
+    toggleCapital(villageId) {
+      const village = this.villages.find((v) => v.id === villageId);
+      if (!village) return;
+      if (village.isCapital) {
+        // toggling off the current capital leaves no capital
+        village.isCapital = false;
+        return;
+      }
+      // capital is exclusive: clear any existing capital first
       const oldCapital = this.villages.find((v) => v.isCapital);
       if (oldCapital) oldCapital.isCapital = false;
-      const newCapital = this.villages.find((v) => v.id === villageId);
-      if (newCapital) newCapital.isCapital = true;
+      village.isCapital = true;
     },
     toggleCity(villageId) {
       const village = this.villages.find((v) => v.id === villageId);

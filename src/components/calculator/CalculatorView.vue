@@ -1,5 +1,5 @@
 <template>
-  <div class="calculator">
+  <div class="calculator page">
     <SettingsBar />
     <div class="container calculatorBody">
       <BuildingPicker :selected-gid="selectedGid" @select="selectedGid = $event" />

@@ -24,10 +24,10 @@
           :class="{ selected: inRange(row.level) }"
           @click="clickRow(row.level)">
           <td>{{ row.level }}</td>
-          <td>{{ row.wood }}</td>
-          <td>{{ row.clay }}</td>
-          <td>{{ row.iron }}</td>
-          <td>{{ row.crop }}</td>
+          <td class="wood-cell">{{ row.wood }}</td>
+          <td class="clay-cell">{{ row.clay }}</td>
+          <td class="iron-cell">{{ row.iron }}</td>
+          <td class="crop-cell">{{ row.crop }}</td>
           <td>{{ row.wood + row.clay + row.iron + row.crop }}</td>
           <td>{{ formatDuration(row.time) }}</td>
           <td>{{ row.pop }}</td>
@@ -38,10 +38,10 @@
       <tfoot v-if="totals">
         <tr>
           <td>{{ totals.from }}–{{ totals.to }}</td>
-          <td>{{ totals.wood }}</td>
-          <td>{{ totals.clay }}</td>
-          <td>{{ totals.iron }}</td>
-          <td>{{ totals.crop }}</td>
+          <td class="wood-cell">{{ totals.wood }}</td>
+          <td class="clay-cell">{{ totals.clay }}</td>
+          <td class="iron-cell">{{ totals.iron }}</td>
+          <td class="crop-cell">{{ totals.crop }}</td>
           <td>{{ totals.wood + totals.clay + totals.iron + totals.crop }}</td>
           <td>{{ formatDuration(totals.time) }}</td>
           <td>+{{ totals.pop }}</td>

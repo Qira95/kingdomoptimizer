@@ -1,39 +1,46 @@
 <template>
-  <div>
+  <div class="page">
     <div class="usage">
-      <div style="width: 20%;">
-        You can add multiple villages, they will be stored in your browser, so whenever you come back, they will be there.<br>
+      <div class="usageCard">
+        You can add multiple villages — they are stored in your browser, so they'll be here when you come back.
         You can rename the active village.
       </div>
-      <div style="width: 30%;">
-        Set current building levels to get up to date recommendations.<br>
+      <div class="usageCard">
+        Set current building levels to get up-to-date recommendations.
         Click the "Buildings" subtitle to sort buildings alphabetically.
       </div>
-      <div style="width: 50%;">
-        The recommendations are sorted based on res/cp, the first is the cheapest.<br>
-        Sometimes, it's worth it to build a building with worse res/cp to be able to build a better res/cp building. When calculating res/cp on buildings with missing requirements, the app uses averages.<br>
-        Click the recommendation to build it in your active village.
+      <div class="usageCard">
+        Recommendations are sorted by res/cp — the first is the cheapest.
+        Sometimes it's worth building a worse res/cp building to unlock a better one; missing requirements use averages.
+        Click a recommendation to build it in your active village.
       </div>
     </div>
-    <div>
-      <TribeSelector />
-    </div>
-    <div class="container" style="padding: 20px">
-      <div style="width: 33%">
-        <VillageList />
-      </div>
-      <div style="width: 66%">
-        <div style="text-align: left">
-          <h1>
-            {{ village.name }}
-            <span v-if="village.isCapital">(capital)</span>
-            <span v-if="village.isCity">(city)</span>
-          </h1>
-          <button type="button" @click="villages.markVillageAsCapital(village.id)">Set as capital</button>
-          <label class="cityToggle">
-            <input type="checkbox" :checked="village.isCity" @change="villages.toggleCity(village.id)">
-            Upgraded to city
-          </label>
+
+    <TribeSelector />
+
+    <div class="optimizerGrid">
+      <VillageList />
+      <div>
+        <div class="villageHeader">
+          <h1>{{ village.name }}</h1>
+          <span v-if="village.isCapital" class="badge">Capital</span>
+          <span v-if="village.isCity" class="badge">City</span>
+          <div class="villageActions">
+            <button
+              type="button"
+              class="btn-toggle"
+              :class="{ active: village.isCapital }"
+              @click="villages.toggleCapital(village.id)">
+              {{ village.isCapital ? 'Capital ✓' : 'Set as capital' }}
+            </button>
+            <button
+              type="button"
+              class="btn-toggle"
+              :class="{ active: village.isCity }"
+              @click="villages.toggleCity(village.id)">
+              {{ village.isCity ? 'Upgraded to city ✓' : 'Upgrade to city' }}
+            </button>
+          </div>
         </div>
         <div class="container">
           <VillageBuildings />

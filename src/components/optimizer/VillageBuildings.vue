@@ -1,8 +1,8 @@
 <template>
-  <div class="buildings">
-    <h2 class="clickable" @click="villages.sortBuildings()">Buildings</h2>
-    <div v-for="(building, i) in village.buildings" :key="building.id">
-      <span>{{ i + 1 }}. &nbsp;</span>
+  <div class="buildings panel">
+    <h2 class="sectionTitle clickable" @click="villages.sortBuildings()">Buildings</h2>
+    <div class="buildingRow" v-for="(building, i) in village.buildings" :key="building.id">
+      <span class="idx">{{ i + 1 }}.</span>
       <select
         :value="building.gid"
         @change="villages.setBuilding(building.id, Number($event.target.value), building.level)">
@@ -13,9 +13,9 @@
         @change="villages.setBuilding(building.id, building.gid, Number($event.target.value))">
         <option v-for="n in maxLevel(building.gid)" :value="n" :key="n">{{ n }}</option>
       </select>
-      <span class="clickable" @click="villages.deleteBuilding(building.id)">delete</span>
+      <span class="deleteLink clickable" @click="villages.deleteBuilding(building.id)">delete</span>
     </div>
-    <button @click="villages.addBuilding()">Add new building</button>
+    <button class="btn-primary" @click="villages.addBuilding()">Add new building</button>
   </div>
 </template>
 
