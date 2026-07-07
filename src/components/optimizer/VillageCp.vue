@@ -8,6 +8,9 @@
       <div class="cpBreakdown">
         <span>Buildings: <strong>{{ buildingCp }}</strong></span>
         <span>Fields (18): <strong>{{ fieldTotalCp }}</strong></span>
+        <span v-if="cityCp > 0">
+          {{ village.isCapital ? 'Capital city' : 'City' }} bonus: <strong>{{ cityCp }}</strong>
+        </span>
         <span v-if="speed !== 1" class="cpSpeed">at {{ speed }}x speed</span>
       </div>
       <div class="cpInputs">
@@ -78,6 +81,7 @@ import { useServersStore } from '../../stores/servers';
 import {
   villageBuildingCp,
   villageFieldCp,
+  villageCityCp,
   villageTotalCp,
   fieldCpReference,
   FIELD_MAX_LEVEL,
@@ -94,6 +98,7 @@ const fieldMaxLevel = FIELD_MAX_LEVEL;
 // every figure shown here is in the server's real per-day terms.
 const buildingCp = computed(() => villageBuildingCp(village.value) * speed.value);
 const fieldTotalCp = computed(() => villageFieldCp(village.value) * speed.value);
+const cityCp = computed(() => villageCityCp(village.value) * speed.value);
 const totalCp = computed(() => villageTotalCp(village.value) * speed.value);
 const target = computed(() => village.value.targetCp || 0);
 </script>

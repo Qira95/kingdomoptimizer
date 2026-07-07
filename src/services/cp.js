@@ -11,6 +11,10 @@ import { byGid } from './gameData';
 const WOODCUTTER_GID = 1; // all four resource fields share one CP schedule
 export const FIELD_SLOTS = 18; // standard village layout
 
+// Flat culture-point bonus (at 1x speed) a village earns from city status.
+export const CITY_CP = 200;
+export const CAPITAL_CITY_CP = 500;
+
 // Cumulative CP produced per day by a single resource field, indexed by level
 // (index 0 = level 1). Identical across wood/clay/iron/crop.
 const FIELD_CP_BY_LEVEL = byGid.get(WOODCUTTER_GID).levels.map((l) => l.cp);
@@ -47,6 +51,13 @@ export function villageFieldCp(village) {
   return fieldCp(village.fieldLevel || 0) * FIELD_SLOTS;
 }
 
+// CP/day bonus for city status; only cities earn it, and a capital city earns
+// the larger amount.
+export function villageCityCp(village) {
+  if (!village.isCity) return 0;
+  return village.isCapital ? CAPITAL_CITY_CP : CITY_CP;
+}
+
 export function villageTotalCp(village) {
-  return villageBuildingCp(village) + villageFieldCp(village);
+  return villageBuildingCp(village) + villageFieldCp(village) + villageCityCp(village);
 }
