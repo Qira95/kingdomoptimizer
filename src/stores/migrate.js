@@ -1,6 +1,16 @@
-// One-time migration of the old Vue 2 app's vuex-persist state
-// (localStorage key "vuex") into the new per-store keys.
-// The old key is left untouched so the old app still works if needed.
+// One-time localStorage migrations, run before the stores hydrate.
+//
+// Two upgrades are handled, newest first:
+//  1. Single-server state (kingdomoptimizer:villages + :settings) -> the
+//     multi-server model (kingdomoptimizer:servers), wrapping everything in
+//     "Server 1" and pulling tribe/role/speed onto that server.
+//  2. The original Vue 2 vuex-persist blob (localStorage "vuex", name-based)
+//     -> the gid-based single-server model, which step 1 then wraps.
+// Each source key is left untouched so older builds still work if needed.
+
+const SERVERS_KEY = 'kingdomoptimizer:servers';
+const VILLAGES_KEY = 'kingdomoptimizer:villages';
+const SETTINGS_KEY = 'kingdomoptimizer:settings';
 
 const NAME_TO_GID = {
   academy: 22, bakery: 9, barracks: 19, brewery: 35, brickyard: 6,
@@ -13,18 +23,21 @@ const NAME_TO_GID = {
   waterditch: 42, workshop: 21,
 };
 
-export function migrateLegacyState() {
-  if (localStorage.getItem('kingdomoptimizer:villages')) return;
-  const legacyRaw = localStorage.getItem('vuex');
-  if (!legacyRaw) return;
-
-  let legacy;
+function readJson(key) {
+  const raw = localStorage.getItem(key);
+  if (!raw) return null;
   try {
-    legacy = JSON.parse(legacyRaw);
+    return JSON.parse(raw);
   } catch (e) {
-    console.warn('legacy vuex state is not valid JSON, skipping migration', e);
-    return;
+    console.warn(`ignoring corrupt state for ${key}`, e);
+    return null;
   }
+}
+
+// Vue 2 vuex blob -> { activeVillageId, villages } in the gid-based shape.
+function villagesFromLegacyVuex() {
+  const legacy = readJson('vuex');
+  if (!legacy) return null;
 
   const villages = (legacy.village?.villages ?? []).map((v) => ({
     id: v.id,
@@ -41,14 +54,55 @@ export function migrateLegacyState() {
     }),
   }));
 
-  if (villages.length > 0) {
-    localStorage.setItem('kingdomoptimizer:villages', JSON.stringify({
-      activeVillageId: legacy.village?.activeVillageId ?? villages[0].id,
-      villages,
-    }));
+  if (villages.length === 0) return null;
+  return {
+    activeVillageId: legacy.village?.activeVillageId ?? villages[0].id,
+    villages,
+    tribe: legacy.tribe,
+  };
+}
+
+export function migrateLegacyState() {
+  if (localStorage.getItem(SERVERS_KEY)) return;
+
+  const villagesState = readJson(VILLAGES_KEY) ?? villagesFromLegacyVuex();
+  if (!villagesState || !Array.isArray(villagesState.villages) || villagesState.villages.length === 0) {
+    return;
   }
-  if (legacy.tribe) {
-    localStorage.setItem('kingdomoptimizer:settings', JSON.stringify({ tribe: legacy.tribe }));
-  }
-  console.info('migrated legacy kingdomoptimizer state from localStorage["vuex"]');
+
+  const settings = readJson(SETTINGS_KEY) ?? {};
+  const server = {
+    id: 1,
+    name: 'Server 1',
+    speed: settings.calc?.speed ?? villagesState.speed ?? 1,
+    tribe: settings.tribe ?? villagesState.tribe ?? 'roman',
+    role: settings.role ?? 'king',
+    activeVillageId: villagesState.activeVillageId ?? villagesState.villages[0].id,
+    villages: villagesState.villages.map((v) => ({
+      id: v.id,
+      name: v.name,
+      isCapital: Boolean(v.isCapital),
+      isCity: Boolean(v.isCity),
+      fieldLevel: v.fieldLevel ?? 0,
+      targetCp: v.targetCp ?? 0,
+      buildings: v.buildings ?? [],
+    })),
+  };
+
+  localStorage.setItem(SERVERS_KEY, JSON.stringify({ activeServerId: 1, servers: [server] }));
+
+  // Drop the now per-server keys from settings so they don't linger.
+  localStorage.setItem(
+    SETTINGS_KEY,
+    JSON.stringify({
+      view: settings.view ?? 'optimizer',
+      calc: {
+        mainBuilding: settings.calc?.mainBuilding ?? 1,
+        fealty: settings.calc?.fealty ?? 0,
+        prestige: settings.calc?.prestige ?? 0,
+      },
+    })
+  );
+
+  console.info('migrated kingdomoptimizer state into the multi-server model');
 }

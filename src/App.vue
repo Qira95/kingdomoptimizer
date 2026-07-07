@@ -29,6 +29,7 @@
         {{ theme === 'dark' ? '☀️' : '🌙' }}
       </button>
     </header>
+    <ServerBar />
     <OptimizerView v-if="settings.view === 'optimizer'" />
     <CalculatorView v-else />
   </div>
@@ -37,6 +38,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useSettingsStore } from './stores/settings';
+import ServerBar from './components/ServerBar.vue';
 import OptimizerView from './components/optimizer/OptimizerView.vue';
 import CalculatorView from './components/calculator/CalculatorView.vue';
 

@@ -1,12 +1,16 @@
 <template>
   <div class="recommendations panel">
     <h2 class="sectionTitle">Recommendations</h2>
+    <p v-if="targetReached" class="recEmpty">
+      This village already produces {{ Math.round(currentCp) }} CP/day, meeting its
+      target of {{ target }}. Raise the target or clear it to see more.
+    </p>
     <div class="recList">
       <div
         v-for="rec in recommendations"
         :key="rec.gid + ':' + rec.level"
         class="recItem tooltip"
-        @click="villages.buildBuilding(rec)">
+        @click="servers.buildBuilding(rec)">
         <span>
           <span class="recName">{{ rec.name }}</span>
           <span class="recLevel">&nbsp;{{ rec.level }}</span>
@@ -31,16 +35,34 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useVillagesStore } from '../../stores/villages';
-import { useSettingsStore } from '../../stores/settings';
+import { useServersStore } from '../../stores/servers';
 import { getRecommendations } from '../../services/recommendation';
+import { villageTotalCp } from '../../services/cp';
 
-const villages = useVillagesStore();
-const settings = useSettingsStore();
+const servers = useServersStore();
 
-const recommendations = computed(() =>
-  getRecommendations(villages.activeVillage, settings.tribe)
-);
+const speed = computed(() => servers.activeServer.speed);
+const target = computed(() => servers.activeVillage.targetCp || 0);
+const currentCp = computed(() => villageTotalCp(servers.activeVillage) * speed.value);
+const targetReached = computed(() => target.value > 0 && currentCp.value >= target.value);
+
+const recommendations = computed(() => {
+  const server = servers.activeServer;
+  const all = getRecommendations(servers.activeVillage, server.tribe, server.role);
+  if (target.value <= 0) return all;
+  if (targetReached.value) return [];
+  // Walk the order, accumulating each step's CP gain (scaled by speed) on top
+  // of what the village already produces; keep the step that crosses the
+  // target, then stop.
+  let running = currentCp.value;
+  const result = [];
+  for (const rec of all) {
+    result.push(rec);
+    running += (rec.cpGain || 0) * speed.value;
+    if (running >= target.value) break;
+  }
+  return result;
+});
 
 // A level that grants no culture points has no meaningful res/cp; the pipeline
 // stores a large sentinel so it sorts last. Show it as "no CP" instead.

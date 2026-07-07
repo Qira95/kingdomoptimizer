@@ -56,11 +56,16 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 import { useSettingsStore } from '../../stores/settings';
+import { useServersStore } from '../../stores/servers';
 import { effectLabels } from '../../services/gameData';
 import { levelStats, formatDuration } from '../../services/calculator';
 
 const props = defineProps({ building: { type: Object, required: true } });
 const settings = useSettingsStore();
+const servers = useServersStore();
+
+// Speed is a per-server setting; the rest of the calculator knobs are global.
+const calc = computed(() => ({ ...settings.calc, speed: servers.activeServer.speed }));
 
 const rangeStart = ref(null);
 const rangeEnd = ref(null);
@@ -71,7 +76,7 @@ watch(() => props.building, () => {
 });
 
 const rows = computed(() =>
-  props.building.levels.map((l) => levelStats(props.building, l.level, settings.calc))
+  props.building.levels.map((l) => levelStats(props.building, l.level, calc.value))
 );
 
 function clickRow(level) {

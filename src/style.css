@@ -466,6 +466,112 @@ input[type='radio'] {
    Optimizer — tribe selector (segmented pills)
    -------------------------------------------------------------------------- */
 
+.selectors {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.speedSelector {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   Server bar (multi-server switcher)
+   -------------------------------------------------------------------------- */
+
+.serverBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-5);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.serverBar .serverBarLabel {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  font-weight: 600;
+}
+
+.serverBar .serverTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.serverBar .serverTab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  border-radius: var(--radius-sm);
+}
+
+.serverBar .serverTab.active {
+  padding: 2px 4px 2px 8px;
+  background: linear-gradient(180deg, var(--primary), var(--primary-strong));
+  box-shadow: var(--shadow-sm);
+}
+
+.serverBar .serverSwitch {
+  padding: 5px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+.serverBar .serverName {
+  width: 120px;
+  padding: 4px 6px;
+  background: var(--primary-contrast);
+  border: 1px solid var(--primary-strong);
+  color: var(--primary-strong);
+  font-weight: 600;
+}
+
+.serverBar .serverDelete {
+  padding: 2px 6px;
+  border: none;
+  background: transparent;
+  color: var(--primary-contrast);
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.serverBar .serverDelete:hover {
+  background: transparent;
+  border-color: transparent;
+  color: var(--primary-contrast);
+  opacity: 0.7;
+}
+
+.serverBar .serverAdd {
+  padding: 5px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.recommendations .recEmpty {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+}
+
 .tribeSelector {
   position: relative;
   display: inline-flex;
@@ -474,7 +580,10 @@ input[type='radio'] {
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  margin-bottom: var(--space-5);
+}
+
+.selectors .tribeSelector {
+  margin-bottom: 0;
 }
 
 .tribeSelector input[type='radio'] {
@@ -614,6 +723,34 @@ input[type='radio'] {
 .villages .villageItem.active {
   background: var(--primary-soft);
   box-shadow: inset 3px 0 0 var(--primary);
+}
+
+.villages .moveControls {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.villages .moveBtn {
+  padding: 0;
+  width: 20px;
+  height: 15px;
+  line-height: 1;
+  font-size: 0.6rem;
+  border-radius: 3px;
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+.villages .moveBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.villages .moveBtn:disabled:hover {
+  background: var(--surface);
+  border-color: var(--border);
 }
 
 .villages .villageName {
@@ -966,4 +1103,135 @@ input[type='radio'] {
   border-top: 2px solid var(--border-strong);
   border-bottom: none;
   color: var(--text);
+}
+
+/* --------------------------------------------------------------------------
+   Optimizer — village culture-point summary
+   -------------------------------------------------------------------------- */
+
+.villageCp {
+  margin-bottom: var(--space-4);
+}
+
+.villageCp .cpSummary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-5);
+}
+
+.villageCp .cpTotal {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.villageCp .cpValue {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.villageCp .cpUnit {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.villageCp .cpBreakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.villageCp .cpInputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin-left: auto;
+}
+
+.villageCp .cpInput {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.villageCp .cpInput input {
+  width: 72px;
+}
+
+.villageCp .cpSpeed {
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+.villageCp .cpTargetNote {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-sm);
+}
+
+.villageCp .cpTargetNote.reached {
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.villageCp .cpRefToggle {
+  margin-top: var(--space-3);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--primary-strong);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.villageCp .cpRefToggle:hover {
+  background: transparent;
+  border-color: transparent;
+  text-decoration: underline;
+}
+
+.villageCp .cpRef {
+  margin-top: var(--space-3);
+}
+
+.villageCp .cpRefNote {
+  margin: 0 0 var(--space-3);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.villageCp .cpRef table {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+}
+
+.villageCp .cpRef th,
+.villageCp .cpRef td {
+  border-bottom: 1px solid var(--border);
+  padding: 4px 16px 4px 0;
+  text-align: right;
+}
+
+.villageCp .cpRef th {
+  color: var(--text-faint);
+  font-family: var(--font);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
 }

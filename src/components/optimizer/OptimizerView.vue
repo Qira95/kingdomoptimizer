@@ -16,7 +16,11 @@
       </div>
     </div>
 
-    <TribeSelector />
+    <div class="selectors">
+      <TribeSelector />
+      <RoleSelector />
+      <SpeedSelector />
+    </div>
 
     <div class="optimizerGrid">
       <VillageList />
@@ -30,18 +34,19 @@
               type="button"
               class="btn-toggle"
               :class="{ active: village.isCapital }"
-              @click="villages.toggleCapital(village.id)">
+              @click="servers.toggleCapital(village.id)">
               {{ village.isCapital ? 'Capital ✓' : 'Set as capital' }}
             </button>
             <button
               type="button"
               class="btn-toggle"
               :class="{ active: village.isCity }"
-              @click="villages.toggleCity(village.id)">
+              @click="servers.toggleCity(village.id)">
               {{ village.isCity ? 'Upgraded to city ✓' : 'Upgrade to city' }}
             </button>
           </div>
         </div>
+        <VillageCp />
         <div class="container">
           <VillageBuildings />
           <RecommendationList />
@@ -53,12 +58,15 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useVillagesStore } from '../../stores/villages';
+import { useServersStore } from '../../stores/servers';
 import TribeSelector from './TribeSelector.vue';
+import RoleSelector from './RoleSelector.vue';
+import SpeedSelector from './SpeedSelector.vue';
 import VillageList from './VillageList.vue';
 import VillageBuildings from './VillageBuildings.vue';
+import VillageCp from './VillageCp.vue';
 import RecommendationList from './RecommendationList.vue';
 
-const villages = useVillagesStore();
-const village = computed(() => villages.activeVillage);
+const servers = useServersStore();
+const village = computed(() => servers.activeVillage);
 </script>

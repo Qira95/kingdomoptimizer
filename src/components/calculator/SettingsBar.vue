@@ -2,7 +2,7 @@
   <div class="settingsBar">
     <label>
       Game speed
-      <select v-model.number="settings.calc.speed">
+      <select v-model.number="servers.activeServer.speed">
         <option v-for="s in [1, 2, 3, 5, 10]" :value="s" :key="s">{{ s }}x</option>
       </select>
     </label>
@@ -29,6 +29,8 @@
 
 <script setup>
 import { useSettingsStore } from '../../stores/settings';
+import { useServersStore } from '../../stores/servers';
 
 const settings = useSettingsStore();
+const servers = useServersStore();
 </script>
