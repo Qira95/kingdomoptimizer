@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia';
-import { byGid } from '../services/gameData';
+import {
+  byGid,
+  occupiesSharedSlot,
+  usedBuildingSlots,
+  buildingSlotCapacity,
+  MAX_EXTENSION_SLOTS,
+} from '../services/gameData';
 
 const MAIN_BUILDING_GID = 15;
 
@@ -15,6 +21,8 @@ function newVillage(id, name) {
     // Desired culture points per day; recommendations stop once the village's
     // projected production reaches it. 0 = no target (show the full list).
     targetCp: 0,
+    // Rare extra building slots (0-2) on top of the standard 20-slot pool.
+    extensionSlots: 0,
     buildings: [{ id: 1, gid: MAIN_BUILDING_GID, level: 1 }],
   };
 }
@@ -103,6 +111,10 @@ export const useServersStore = defineStore('servers', {
       const village = this.activeServer.villages.find((v) => v.id === villageId);
       if (village) village.targetCp = Math.max(0, cp || 0);
     },
+    setExtensionSlots(villageId, count) {
+      const village = this.activeServer.villages.find((v) => v.id === villageId);
+      if (village) village.extensionSlots = Math.max(0, Math.min(count || 0, MAX_EXTENSION_SLOTS));
+    },
     deleteVillage(villageId) {
       const server = this.activeServer;
       const index = server.villages.findIndex((v) => v.id === villageId);
@@ -155,12 +167,18 @@ export const useServersStore = defineStore('servers', {
       building.level = Math.min(level, byGid.get(gid).maxLevel);
     },
     buildBuilding({ gid, level }) {
-      const existing = this.activeVillage.buildings.find((b) => b.gid === gid && b.level < level);
+      const village = this.activeVillage;
+      const existing = village.buildings.find((b) => b.gid === gid && b.level < level);
       if (existing) {
         existing.level = level;
-      } else {
-        this.activeVillage.buildings.push({ id: Date.now(), gid, level });
+        return;
       }
+      // A brand-new shared-slot building type needs a free slot in the pool.
+      const isNewType = !village.buildings.some((b) => b.gid === gid);
+      if (isNewType && occupiesSharedSlot(gid) && usedBuildingSlots(village) >= buildingSlotCapacity(village)) {
+        return;
+      }
+      village.buildings.push({ id: Date.now(), gid, level });
     },
     deleteBuilding(buildingId) {
       const buildings = this.activeVillage.buildings;

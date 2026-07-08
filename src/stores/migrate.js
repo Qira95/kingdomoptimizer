@@ -85,6 +85,7 @@ export function migrateLegacyState() {
       isCity: Boolean(v.isCity),
       fieldLevel: v.fieldLevel ?? 0,
       targetCp: v.targetCp ?? 0,
+      extensionSlots: v.extensionSlots ?? 0,
       buildings: v.buildings ?? [],
     })),
   };

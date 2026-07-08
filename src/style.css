@@ -783,6 +783,37 @@ input[type='radio'] {
   width: 100%;
 }
 
+/* Slot usage / extension slots */
+.buildings .slotInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.buildings .slotCount {
+  font-weight: 600;
+}
+
+.buildings .slotCount.slotsFull {
+  color: var(--clay);
+}
+
+.buildings .extLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.buildings .slotsFullNote {
+  margin: 0 0 var(--space-2);
+  font-size: 0.8rem;
+  color: var(--clay);
+}
+
 /* Building rows */
 .buildings .buildingRow {
   display: grid;

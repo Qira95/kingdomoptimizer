@@ -15,13 +15,14 @@
           <span class="recName">{{ rec.name }}</span>
           <span class="recLevel">&nbsp;{{ rec.level }}</span>
         </span>
-        <span class="recCost" :class="{ reqStep: !rec.cpGain }">{{ resPerCp(rec) }}</span>
+        <span class="recCost" :class="{ reqStep: isReqStep(rec) }">{{ costLabel(rec) }}</span>
         <span class="tooltiptext">
-          <span v-if="!rec.cpGain" class="res">Requirement step — grants no culture points, needed to unlock other buildings.</span>
-          <template v-else>
+          <span v-if="rec.target" class="res">Required for {{ targetLabel(rec) }}.<br></span>
+          <template v-if="rec.cpGain">
             <span class="res">CP gain:</span> {{ rec.cpGain }}<br>
             <span class="res">Res/CP:</span> {{ Math.round(rec.costPerCpGain) }} res/cp<br>
           </template>
+          <span v-else-if="!rec.target" class="res">Grants no culture points.<br></span>
           <span class="res">Total cost:</span> {{ rec.levelCost }}<br>
           <span class="res">Wood:</span> {{ rec.wood }} &nbsp;
           <span class="res">Clay:</span> {{ rec.clay }}<br>
@@ -37,6 +38,7 @@
 import { computed } from 'vue';
 import { useServersStore } from '../../stores/servers';
 import { getRecommendations } from '../../services/recommendation';
+import { byGid } from '../../services/gameData';
 import { villageTotalCp } from '../../services/cp';
 
 const servers = useServersStore();
@@ -64,10 +66,27 @@ const recommendations = computed(() => {
   return result;
 });
 
-// A level that grants no culture points has no meaningful res/cp; the pipeline
-// stores a large sentinel so it sorts last. Show it as "no CP" instead.
-function resPerCp(rec) {
-  if (!rec.cpGain) return 'req. step';
-  return `${Math.round(rec.costPerCpGain)} res/cp`;
+// A step is a "requirement step" when it was force-built to satisfy another
+// building's prerequisites — the pipeline stamps those with `target`
+// ("gid:level"). That is independent of CP: a requirement step may still grant
+// CP. We only show the compact REQ badge for requirement steps that yield no
+// CP (there is nothing else worth displaying); everything else shows res/CP.
+function isReqStep(rec) {
+  return !rec.cpGain && Boolean(rec.target);
+}
+
+// Compact right-hand label: res/CP for CP-granting steps, a REQ badge for no-CP
+// requirement steps, and a neutral "no CP" for the few levels that grant
+// nothing and aren't required by anything either.
+function costLabel(rec) {
+  if (rec.cpGain) return `${Math.round(rec.costPerCpGain)} res/cp`;
+  return rec.target ? 'req. step' : 'no CP';
+}
+
+// Resolve a `target` ("gid:level") into "Building Name level" for the tooltip.
+function targetLabel(rec) {
+  const [gid, level] = rec.target.split(':');
+  const building = byGid.get(Number(gid));
+  return `${building ? building.name : `#${gid}`} ${level}`;
 }
 </script>
