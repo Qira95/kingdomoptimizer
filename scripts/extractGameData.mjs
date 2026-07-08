@@ -16,6 +16,12 @@ import vm from 'node:vm';
 const BUNDLE_URL = 'https://tk-kb.kingdoms.com/main.js';
 const OUT_PATH = join(dirname(fileURLToPath(import.meta.url)), '..', 'data', 'gameData.json');
 
+// Buildings present in the official calculator's embedded data but not in the
+// live game. The Teahouse (gid 44) is listed in the bundle (and the official
+// documentation table) but does not exist in Travian Kingdoms, so we drop it
+// from the extracted data entirely.
+const EXCLUDED_GIDS = new Set([44]);
+
 const KNOWN_PREREQ_TYPES = new Set([
   'Building',
   'NotBuilding',
@@ -146,6 +152,7 @@ function validate(rawBuildings, names) {
 function toOutput(rawBuildings, names, effectLabels) {
   const buildings = rawBuildings
     .slice()
+    .filter((b) => !EXCLUDED_GIDS.has(b.gid))
     .sort((a, b) => a.gid - b.gid)
     .map((b) => ({
       gid: b.gid,

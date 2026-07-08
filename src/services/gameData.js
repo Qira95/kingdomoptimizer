@@ -1,4 +1,12 @@
 import gameData from '../../data/gameData.json';
+import {
+  occupiesSharedSlot,
+  MULTI_INSTANCE_GIDS,
+  BASE_BUILDING_SLOTS,
+  MAX_EXTENSION_SLOTS,
+} from './buildOrderCore';
+
+export { occupiesSharedSlot, MULTI_INSTANCE_GIDS, BASE_BUILDING_SLOTS, MAX_EXTENSION_SLOTS };
 
 export const buildings = gameData.buildings;
 export const effectLabels = gameData.effectLabels;
@@ -16,30 +24,22 @@ export const villageBuildings = buildings.filter(
     !b.prerequisites.some((p) => p.type === 'WonderOfTheWorldVillage')
 );
 
-// Buildings that occupy their own dedicated position in the village and so do
-// NOT consume one of the shared building slots: the rally point, the three
-// tribe walls (+ the Natarian wall), and the city Water Ditch (a moat built
-// around the village). Resource fields (gid 1-4) sit outside the village
-// entirely and never appear in a village's building list.
-const DEDICATED_SLOT_GIDS = new Set([16, 31, 32, 33, 42, 43]);
-
-// A standard village has 20 shared building slots (on top of the dedicated
-// ones above). Villages may hold up to 2 rare extension slots as well.
-export const BASE_BUILDING_SLOTS = 20;
-export const MAX_EXTENSION_SLOTS = 2;
-
-// Whether a building type consumes one of the shared building slots.
-export function occupiesSharedSlot(gid) {
-  return !DEDICATED_SLOT_GIDS.has(gid);
-}
-
-// Distinct shared-slot building types currently placed in the village.
+// Shared building slots currently occupied. Single-instance types count once
+// regardless of duplicate rows; multi-instance buildings (warehouse, granary,
+// cranny, trapper, healing tent) count every copy, since each copy sits in its
+// own slot.
 export function usedBuildingSlots(village) {
-  const gids = new Set();
+  const singleTypes = new Set();
+  let multiCopies = 0;
   for (const b of village.buildings) {
-    if (occupiesSharedSlot(b.gid)) gids.add(b.gid);
+    if (!occupiesSharedSlot(b.gid)) continue;
+    if (MULTI_INSTANCE_GIDS.has(b.gid)) {
+      multiCopies += 1;
+    } else {
+      singleTypes.add(b.gid);
+    }
   }
-  return gids.size;
+  return singleTypes.size + multiCopies;
 }
 
 // Total shared building slots available, including any extension slots.
