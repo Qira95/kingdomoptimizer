@@ -11,5 +11,11 @@ export const useSettingsStore = defineStore('settings', {
       fealty: 0,
       prestige: 0,
     },
+    // Crop-comparison knobs applied to every cropper candidate equally, so
+    // they change the crop/hour figures shown but never the ranking order.
+    crop: {
+      fieldLevel: 20,
+      millBakery: false,
+    },
   }),
 });

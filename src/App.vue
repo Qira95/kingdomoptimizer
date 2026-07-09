@@ -18,6 +18,12 @@
           @click="settings.view = 'calculator'">
           Building calculator
         </button>
+        <button
+          type="button"
+          :class="{ active: settings.view === 'crop' }"
+          @click="settings.view = 'crop'">
+          Crop calculator
+        </button>
       </nav>
       <span class="spacer"></span>
       <button
@@ -31,7 +37,8 @@
     </header>
     <ServerBar />
     <OptimizerView v-if="settings.view === 'optimizer'" />
-    <CalculatorView v-else />
+    <CalculatorView v-else-if="settings.view === 'calculator'" />
+    <CropView v-else />
   </div>
 </template>
 
@@ -41,12 +48,13 @@ import { useSettingsStore } from './stores/settings';
 import ServerBar from './components/ServerBar.vue';
 import OptimizerView from './components/optimizer/OptimizerView.vue';
 import CalculatorView from './components/calculator/CalculatorView.vue';
+import CropView from './components/crop/CropView.vue';
 
 const settings = useSettingsStore();
 
 // deep-link support: /#optimizer or /#calculator selects the view on load
 const hashView = window.location.hash.slice(1);
-if (hashView === 'optimizer' || hashView === 'calculator') {
+if (hashView === 'optimizer' || hashView === 'calculator' || hashView === 'crop') {
   settings.view = hashView;
 }
 

@@ -52,7 +52,7 @@
   --radius-lg: 16px;
 
   --font: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
-  --font-display: 'Trajan Pro', 'Times New Roman', Georgia, var(--font);
+  --font-display: Georgia, 'Times New Roman', 'Iowan Old Style', 'Palatino Linotype', serif;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -1265,4 +1265,111 @@ input[type='radio'] {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Crop calculator — cropper comparison
+   -------------------------------------------------------------------------- */
+
+.crop .settingsNote {
+  font-size: 0.82rem;
+  color: var(--text-faint);
+  font-style: italic;
+  flex: 1 1 220px;
+}
+
+.cropPanel .cropIntro {
+  margin: 0 0 var(--space-4);
+  max-width: 70ch;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.cropTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.cropTable th,
+.cropTable td {
+  border-bottom: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.cropTable thead th {
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 2px solid var(--border-strong);
+}
+
+.cropTable thead th.crop {
+  color: var(--crop);
+  text-align: right;
+}
+
+.cropTable .markCol {
+  width: 32px;
+  text-align: center;
+}
+
+.cropTable .actionCol {
+  width: 60px;
+  text-align: right;
+}
+
+.cropTable .nameCol {
+  min-width: 180px;
+}
+
+.cropTable .nameCol input[type='text'] {
+  width: 100%;
+}
+
+.cropTable .bestMark {
+  color: var(--primary);
+  font-size: 1.05rem;
+}
+
+.cropTable .cropValue {
+  text-align: right;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.cropTable tbody tr.best {
+  background: var(--primary-soft);
+}
+
+.cropTable tbody tr.best td:first-child {
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+
+.cropTable tbody tr.best .cropValue {
+  color: var(--primary-strong);
+}
+
+.cropTable .cropEmpty {
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+.cropTable .deleteLink {
+  color: var(--text-faint);
+  font-size: 0.82rem;
+}
+
+.cropTable .deleteLink:hover {
+  color: var(--clay);
+}
+
+.cropPanel > button {
+  margin-top: var(--space-4);
 }

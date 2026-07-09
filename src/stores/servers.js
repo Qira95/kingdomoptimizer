@@ -6,6 +6,7 @@ import {
   buildingSlotCapacity,
   MAX_EXTENSION_SLOTS,
 } from '../services/gameData';
+import { CROPPER_TYPES, OASIS_STEPS } from '../services/crop';
 
 const MAIN_BUILDING_GID = 15;
 
@@ -27,6 +28,13 @@ function newVillage(id, name) {
   };
 }
 
+// A cropper candidate for the crop calculator: a would-be capital identified
+// by name or coordinates, its field count (7/9/15) and the max oasis crop
+// bonus reachable there.
+function newCropper(id) {
+  return { id, label: 'New cropper', fields: 15, oasis: 0 };
+}
+
 function newServer(id, name) {
   return {
     id,
@@ -36,6 +44,7 @@ function newServer(id, name) {
     role: 'king',
     activeVillageId: 1,
     villages: [{ ...newVillage(1, 'Village 1'), isCapital: true }],
+    cropCandidates: [newCropper(1)],
   };
 }
 
@@ -189,6 +198,31 @@ export const useServersStore = defineStore('servers', {
       this.activeVillage.buildings.sort((a, b) =>
         byGid.get(a.gid).slug > byGid.get(b.gid).slug ? 1 : -1
       );
+    },
+
+    // --- cropper candidates (active server) ---
+    addCropper() {
+      const server = this.activeServer;
+      if (!server.cropCandidates) server.cropCandidates = [];
+      server.cropCandidates.push(newCropper(Date.now()));
+    },
+    setCropperLabel(cropperId, label) {
+      const cropper = this.activeServer.cropCandidates?.find((c) => c.id === cropperId);
+      if (cropper) cropper.label = label;
+    },
+    setCropperFields(cropperId, fields) {
+      const cropper = this.activeServer.cropCandidates?.find((c) => c.id === cropperId);
+      if (cropper && CROPPER_TYPES.includes(fields)) cropper.fields = fields;
+    },
+    setCropperOasis(cropperId, oasis) {
+      const cropper = this.activeServer.cropCandidates?.find((c) => c.id === cropperId);
+      if (cropper && OASIS_STEPS.includes(oasis)) cropper.oasis = oasis;
+    },
+    deleteCropper(cropperId) {
+      const list = this.activeServer.cropCandidates;
+      if (!list) return;
+      const index = list.findIndex((c) => c.id === cropperId);
+      if (index > -1) list.splice(index, 1);
     },
   },
 });
