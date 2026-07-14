@@ -679,8 +679,22 @@ input[type='radio'] {
 .villageHeader .villageActions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-2);
   margin-left: auto;
+}
+
+.villageHeader .targetCpInput {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.villageHeader .targetCpInput input {
+  width: 72px;
 }
 
 /* Toggleable state button (e.g. "Upgraded to city") */
@@ -1172,9 +1186,16 @@ input[type='radio'] {
 .villageCp .cpBreakdown {
   display: flex;
   flex-wrap: wrap;
+  align-items: baseline;
   gap: var(--space-2) var(--space-4);
   font-size: 0.88rem;
   color: var(--text-muted);
+}
+
+/* Keep each contribution on one line so longer labels (e.g. "Fealty base
+   (capital): 264") wrap as a whole unit instead of breaking mid-item. */
+.villageCp .cpBreakdown > span {
+  white-space: nowrap;
 }
 
 .villageCp .cpInputs {

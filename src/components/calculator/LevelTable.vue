@@ -65,7 +65,12 @@ const settings = useSettingsStore();
 const servers = useServersStore();
 
 // Speed is a per-server setting; the rest of the calculator knobs are global.
-const calc = computed(() => ({ ...settings.calc, speed: servers.activeServer.speed }));
+const calc = computed(() => ({
+  mainBuilding: settings.calc.mainBuilding,
+  fealty: servers.activeServer.fealty ?? 0,
+  prestige: servers.activeServer.prestige ?? 0,
+  speed: servers.activeServer.speed,
+}));
 
 const rangeStart = ref(null);
 const rangeEnd = ref(null);

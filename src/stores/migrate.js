@@ -77,6 +77,9 @@ export function migrateLegacyState() {
     speed: settings.calc?.speed ?? villagesState.speed ?? 1,
     tribe: settings.tribe ?? villagesState.tribe ?? 'roman',
     role: settings.role ?? 'king',
+    fealty: settings.calc?.fealty ?? 0,
+    prestige: settings.calc?.prestige ?? 0,
+    prestigeCp: 0,
     activeVillageId: villagesState.activeVillageId ?? villagesState.villages[0].id,
     villages: villagesState.villages.map((v) => ({
       id: v.id,
@@ -99,8 +102,6 @@ export function migrateLegacyState() {
       view: settings.view ?? 'optimizer',
       calc: {
         mainBuilding: settings.calc?.mainBuilding ?? 1,
-        fealty: settings.calc?.fealty ?? 0,
-        prestige: settings.calc?.prestige ?? 0,
       },
     })
   );

@@ -58,6 +58,34 @@ export function villageCityCp(village) {
   return village.isCapital ? CAPITAL_CITY_CP : CITY_CP;
 }
 
-export function villageTotalCp(village) {
-  return villageBuildingCp(village) + villageFieldCp(village) + villageCityCp(village);
+// Fealty is a kingdom-wide building that, from level 7 upward, grants the
+// capital a base of extra culture points per day: a flat 24 CP per level above 6
+// (24 at L7 … 336 at L20). Only the capital benefits.
+export const FEALTY_CP_MIN_LEVEL = 7;
+export const FEALTY_CP_PER_LEVEL = 24;
+
+export function villageFealtyCp(village, fealty) {
+  if (!village.isCapital) return 0;
+  const level = fealty || 0;
+  if (level < FEALTY_CP_MIN_LEVEL) return 0;
+  return FEALTY_CP_PER_LEVEL * (level - (FEALTY_CP_MIN_LEVEL - 1));
+}
+
+// A high enough player prestige adds more capital CP on top of the fealty base.
+// The game exposes this only as a bonus at the player's current fealty level (no
+// full schedule to derive), so it's a manual per-server figure the player reads
+// off the game and enters. Capital-only, like the fealty base it adds to.
+export function villagePrestigeCp(village, prestigeCp) {
+  if (!village.isCapital) return 0;
+  return Math.max(0, prestigeCp || 0);
+}
+
+export function villageTotalCp(village, { fealty = 0, prestigeCp = 0 } = {}) {
+  return (
+    villageBuildingCp(village) +
+    villageFieldCp(village) +
+    villageCityCp(village) +
+    villageFealtyCp(village, fealty) +
+    villagePrestigeCp(village, prestigeCp)
+  );
 }

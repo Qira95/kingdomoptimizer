@@ -11,6 +11,8 @@
         <span v-if="cityCp > 0">
           {{ village.isCapital ? 'Capital city' : 'City' }} bonus: <strong>{{ cityCp }}</strong>
         </span>
+        <span v-if="fealtyCp > 0">Fealty base (capital): <strong>{{ fealtyCp }}</strong></span>
+        <span v-if="prestigeCp > 0">Prestige bonus (capital): <strong>{{ prestigeCp }}</strong></span>
         <span v-if="speed !== 1" class="cpSpeed">at {{ speed }}x speed</span>
       </div>
       <div class="cpInputs">
@@ -23,15 +25,23 @@
             :value="village.fieldLevel || 0"
             @input="servers.setFieldLevel(village.id, Number($event.target.value))">
         </label>
-        <label class="cpInput">
-          Target CP / day
-          <input
-            type="number"
-            min="0"
-            step="10"
-            :value="village.targetCp || 0"
-            @input="servers.setTargetCp(village.id, Number($event.target.value))">
-        </label>
+        <template v-if="village.isCapital">
+          <label class="cpInput">
+            Fealty level
+            <select v-model.number="server.fealty">
+              <option v-for="n in 21" :value="n - 1" :key="n">{{ n - 1 }}</option>
+            </select>
+          </label>
+          <label class="cpInput">
+            Prestige CP bonus
+            <input
+              type="number"
+              min="0"
+              step="1"
+              :value="server.prestigeCp || 0"
+              @input="servers.setPrestigeCp(Number($event.target.value))">
+          </label>
+        </template>
       </div>
     </div>
 
@@ -82,14 +92,19 @@ import {
   villageBuildingCp,
   villageFieldCp,
   villageCityCp,
+  villageFealtyCp,
+  villagePrestigeCp,
   villageTotalCp,
   fieldCpReference,
   FIELD_MAX_LEVEL,
 } from '../../services/cp';
 
 const servers = useServersStore();
+const server = computed(() => servers.activeServer);
 const village = computed(() => servers.activeVillage);
 const speed = computed(() => servers.activeServer.speed);
+const fealty = computed(() => server.value.fealty ?? 0);
+const prestigeCpInput = computed(() => server.value.prestigeCp ?? 0);
 
 const showRef = ref(false);
 const fieldMaxLevel = FIELD_MAX_LEVEL;
@@ -99,6 +114,14 @@ const fieldMaxLevel = FIELD_MAX_LEVEL;
 const buildingCp = computed(() => villageBuildingCp(village.value) * speed.value);
 const fieldTotalCp = computed(() => villageFieldCp(village.value) * speed.value);
 const cityCp = computed(() => villageCityCp(village.value) * speed.value);
-const totalCp = computed(() => villageTotalCp(village.value) * speed.value);
+const fealtyCp = computed(() => villageFealtyCp(village.value, fealty.value) * speed.value);
+const prestigeCp = computed(
+  () => villagePrestigeCp(village.value, prestigeCpInput.value) * speed.value
+);
+const totalCp = computed(
+  () =>
+    villageTotalCp(village.value, { fealty: fealty.value, prestigeCp: prestigeCpInput.value }) *
+    speed.value
+);
 const target = computed(() => village.value.targetCp || 0);
 </script>

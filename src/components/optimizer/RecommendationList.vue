@@ -45,7 +45,13 @@ const servers = useServersStore();
 
 const speed = computed(() => servers.activeServer.speed);
 const target = computed(() => servers.activeVillage.targetCp || 0);
-const currentCp = computed(() => villageTotalCp(servers.activeVillage) * speed.value);
+const currentCp = computed(
+  () =>
+    villageTotalCp(servers.activeVillage, {
+      fealty: servers.activeServer.fealty ?? 0,
+      prestigeCp: servers.activeServer.prestigeCp ?? 0,
+    }) * speed.value
+);
 const targetReached = computed(() => target.value > 0 && currentCp.value >= target.value);
 
 const recommendations = computed(() => {

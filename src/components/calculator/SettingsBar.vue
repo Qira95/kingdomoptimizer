@@ -14,13 +14,13 @@
     </label>
     <label>
       Fealty level
-      <select v-model.number="settings.calc.fealty">
+      <select v-model.number="servers.activeServer.fealty">
         <option v-for="n in 21" :value="n - 1" :key="n">{{ n - 1 }}</option>
       </select>
     </label>
     <label>
       Prestige level
-      <select v-model.number="settings.calc.prestige">
+      <select v-model.number="servers.activeServer.prestige">
         <option v-for="n in 14" :value="n - 1" :key="n">{{ n - 1 }}</option>
       </select>
     </label>

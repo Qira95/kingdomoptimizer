@@ -42,6 +42,14 @@ function newServer(id, name) {
     speed: 1,
     tribe: 'roman',
     role: 'king',
+    // Kingdom-wide fealty level (0-20) and account prestige tier (0-13); both
+    // feed the calculator's build time/cost reductions, and fealty also drives
+    // the capital's base bonus culture points. prestigeCp is the extra capital
+    // CP/day granted by prestige on top of the fealty base — entered manually
+    // (the game shows no derivable schedule).
+    fealty: 0,
+    prestige: 0,
+    prestigeCp: 0,
     activeVillageId: 1,
     villages: [{ ...newVillage(1, 'Village 1'), isCapital: true }],
     cropCandidates: [newCropper(1)],
@@ -96,6 +104,15 @@ export const useServersStore = defineStore('servers', {
     },
     setRole(role) {
       this.activeServer.role = role;
+    },
+    setFealty(level) {
+      this.activeServer.fealty = Math.max(0, Math.min(level || 0, 20));
+    },
+    setPrestige(level) {
+      this.activeServer.prestige = Math.max(0, Math.min(level || 0, 13));
+    },
+    setPrestigeCp(cp) {
+      this.activeServer.prestigeCp = Math.max(0, cp || 0);
     },
 
     // --- villages (active server) ---

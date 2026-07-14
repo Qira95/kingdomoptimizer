@@ -44,6 +44,15 @@
               @click="servers.toggleCity(village.id)">
               {{ village.isCity ? 'Upgraded to city ✓' : 'Upgrade to city' }}
             </button>
+            <label class="targetCpInput">
+              Target CP / day
+              <input
+                type="number"
+                min="0"
+                step="10"
+                :value="village.targetCp || 0"
+                @input="servers.setTargetCp(village.id, Number($event.target.value))">
+            </label>
           </div>
         </div>
         <VillageCp />
